@@ -67,32 +67,4 @@ def _get_all_group_numbers():
         has_more = resp['has_more']
     return group_numbers
 
-# Method to setup webhooks for this integration to work when it first turns on
-def setup_integration_webhooks():
-    endpoint_url = os.environ.get('ENDPOINT_URL')
-    has_more = True
-    offset = 0
-    webhooks = []
-    while has_more:
-        try:
-            resp = api.get('webhook', params={'_skip': offset })
-        except Exception as e:
-            logging.error(f'Failed to get webhooks because {str(e)}')
-        webhooks += [i['url'] for i in resp['data']]
-        offset += len(resp['data'])
-        has_more = resp['has_more']
-        
-    if endpoint_url in webhooks:
-        logging.info('The webhooks for this integration are already active')
-    else:
-        try:
-            api.post('webhook', data={ 'url': endpoint_url, 'events': [
-                {'object_type': 'activity.sms', 'action': 'sent'},
-                { 'object_type': 'activity.email', 'action': 'sent'}
-            ]})
-            logging.info('Successfully subscribed integration webhooks')
-        except Exception as e:
-            logging.error(f'Failed to subscribe integration webhooks because {str(e)}')
-    return None
-
 
