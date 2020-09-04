@@ -43,7 +43,7 @@ def _find_notifications_to_be_marked_as_done(lead_id):
         except Exception as e:
             logging.error(f'Failed to get task notifications on {lead_id} because {str(e)}')
             return []
-        notifications += [i['id'] for i in resp['data']]
+        notifications += [i for i in resp['data']]
         offset += len(resp['data'])
         has_more = resp['has_more']
     return notifications
@@ -57,10 +57,10 @@ def _get_all_group_numbers():
     group_numbers = set()
     while has_more:
         try:
-            resp = api.get('phone_number', params={ '_fields': 'number', '_skip': offset, 'is_group_number': True })
+            resp = api.get('phone_number', params={ '_fields': 'number', '_skip': offset, 'is_group_number': 'true' })
         except Exception as e:
             logging.error(f'Failed to get group numbers because {str(e)}')
-            
+            return group_numbers
         for num in resp['data']:
             group_numbers.add(num['number'])
         offset += len(resp['data'])

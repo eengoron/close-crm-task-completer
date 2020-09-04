@@ -14,7 +14,7 @@ def index():
         data = json.loads(request.data)
         event_data = data['event']
         if event_data['data'].get('lead_id'):
-            lead_id = event['data']['lead_id']
+            lead_id = event_data['data']['lead_id']
             mark_notifications_as_done_for_lead(lead_id)
             return f"Processed Webhook for {lead_id}", 200
     except Exception as e:
